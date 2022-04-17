@@ -15,13 +15,22 @@ plugins {
 
 apply plugin: 'net.minecraftforge.gradle'
 
+shadowJar {
+    relocate 'org.apache.commons.lang.enum', 'me.alien.twitch.integration.lang'
+}
+
 reobf {
     shadowJar {}
 }
 
-
 group = 'Alien'
 version = '1.0'
+
+allprojects {
+    repositories {
+        maven { url 'https://jitpack.io' }
+    }
+}
 
 java {
     archivesBaseName = 'Twitch_integration'
@@ -166,9 +175,9 @@ repositories {
     // ForgeGradle automatically adds the Forge maven and Maven Central for you
 
     // If you have mod jar dependencies in ./libs, you can declare them as a repository like so:
-    // flatDir {
-    //     dir 'libs'
-    // }
+    flatDir {
+         dir 'libs'
+    }
 }
 
 dependencies {
@@ -177,9 +186,10 @@ dependencies {
     // The userdev artifact is a special name and will get all sorts of transformations applied to it.
     minecraft 'net.minecraftforge:forge:1.18.2-40.0.52'
 
-    library 'com.github.twitch4j:twitch4j:1.9.0'
+    //library 'com.github.twitch4j:twitch4j:1.9.0'
     library 'org.json:json:20220320'
     library 'org.mariadb.jdbc:mariadb-java-client:3.0.4'
+    //library 'com.github.zaze06:twitch4j-mcforgeCompadible:1.9.0-minecraftForge'
 
     // Real mod deobf dependency examples - these get remapped to your current mappings
     // compileOnly fg.deobf("mezz.jei:jei-${mc_version}:${jei_version}:api") // Adds JEI API as a compile dependency
