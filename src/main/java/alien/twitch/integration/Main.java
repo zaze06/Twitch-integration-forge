@@ -1,72 +1,51 @@
 package alien.twitch.integration;
 
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
+import com.github.philippheuer.credentialmanager.CredentialManager;
+import com.github.philippheuer.credentialmanager.CredentialManagerBuilder;
+import com.github.philippheuer.credentialmanager.domain.OAuth2Credential;
+import com.github.twitch4j.TwitchClient;
+import com.github.twitch4j.TwitchClientBuilder;
+import com.github.twitch4j.auth.providers.TwitchIdentityProvider;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.RegistryEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.InterModComms;
+import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
-import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
-import net.minecraftforge.event.server.ServerStartingEvent;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.fml.config.ModConfig;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.json.JSONObject;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.sql.*;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 // The value here should match an entry in the META-INF/mods.toml file
-@Mod("twitch_integration")
+@Mod(Main.MODID)
 public class Main {
 
+    public final JSONObject credentials = new JSONObject(Loader.leadFile(getClass().getResourceAsStream("/credentials.json")));
+    public final JSONObject redemptions = new JSONObject(Loader.leadFile(getClass().getResourceAsStream("/redemtions.json")));
+    public final OAuth2Credential credential = new OAuth2Credential("twitch", credentials.getString("user_ID"));
+    public final CredentialManager credentialManager = CredentialManagerBuilder.builder().build();
+    public final JSONObject mysql = credentials.getJSONObject("mysql");
+    public Connection conn = null;
+    public final Map<String, Integer> viewerPoints = new HashMap<>();
+
     // Directly reference a log4j logger.
-    private static final Logger LOGGER = LogManager.getLogger();
+    public static final Logger LOGGER = LogManager.getLogger();
+    public static final String MODID = "twitch_integration";
+    public static String chat;
 
     public Main() {
+        MinecraftForge.EVENT_BUS.register(new Listener(this));
+        ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, Config.clientConfig);
+
+        credentialManager.registerIdentityProvider(new TwitchIdentityProvider(credentials.getString("bot_ID"), credentials.getString("bot_Secreat"), ""));
 
 
-        // Register ourselves for server and other game events we are interested in
-        MinecraftForge.EVENT_BUS.register(this);
-    }
-
-    private void setup(final FMLCommonSetupEvent event) {
-        // some preinit code
-        LOGGER.info("HELLO FROM PREINIT");
-        LOGGER.info("DIRT BLOCK >> {}", Blocks.DIRT.getRegistryName());
-    }
-
-    private void enqueueIMC(final InterModEnqueueEvent event) {
-        // some example code to dispatch IMC to another mod
-        InterModComms.sendTo("Twitch_integration", "helloworld", () -> {
-            LOGGER.info("Hello world from the MDK");
-            return "Hello world";
-        });
-    }
-
-    private void processIMC(final InterModProcessEvent event) {
-        // some example code to receive and process InterModComms from other mods
-        LOGGER.info("Got IMC {}", event.getIMCStream().
-                map(m -> m.messageSupplier().get()).
-                collect(Collectors.toList()));
-    }
-
-    // You can use SubscribeEvent and let the Event Bus discover methods to call
-    @SubscribeEvent
-    public void onServerStarting(ServerStartingEvent event) {
-        // do something when the server starts
-        LOGGER.info("HELLO from server starting");
-    }
-
-    // You can use EventBusSubscriber to automatically subscribe events on the contained class (this is subscribing to the MOD
-    // Event bus for receiving Registry Events)
-    @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
-    public static class RegistryEvents {
-        @SubscribeEvent
-        public static void onBlocksRegistry(final RegistryEvent.Register<Block> blockRegistryEvent) {
-            // register a new block here
-            LOGGER.info("HELLO from Register Block");
-        }
     }
 }
