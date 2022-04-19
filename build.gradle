@@ -207,7 +207,6 @@ dependencies {
     library(group: 'com.github.twitch4j', name: 'twitch4j', version: '1.9.0') {
         exclude group: "commons-lang"
     }
-    //library 'org.apache.commons:commons-lang3:3.12.0'
     library 'blank:commons-lang-2.6:2.6'
 
     // Twitch4J java twitch library
@@ -252,6 +251,7 @@ dependencies {
     //library 'com.fasterxml.jackson.core:jackson-core:2.13.2'
 
     runtimeOnly fg.deobf('curse.maven:configured-457570:3721946')
+    //runtimeOnly fg.deobf('blank:OptiFine_1.18.2_HD_U_H7:H7')
     //implementation fg.deobf('blank:twitch4jLib-1.0:1.0')
 
     // Real mod deobf dependency examples - these get remapped to your current mappings

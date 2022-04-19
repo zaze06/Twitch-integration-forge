@@ -1,6 +1,6 @@
-package alien.twitch.integration;
+package me.alien.twitch.integration;
 
-import alien.twitch.integration.commands.Connect;
+import me.alien.twitch.integration.commands.Connect;
 import com.github.twitch4j.TwitchClient;
 import com.github.twitch4j.TwitchClientBuilder;
 import net.minecraftforge.event.RegisterCommandsEvent;
@@ -19,12 +19,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import static alien.twitch.integration.Main.*;
+import static me.alien.twitch.integration.Main.*;
 
 @Mod.EventBusSubscriber
 public class Listener {
     private final Main main;
-    private TwitchClient twitchClient;
+    public static TwitchClient twitchClient;
 
     public Listener(Main main) {
         this.main = main;
@@ -83,10 +83,6 @@ public class Listener {
                 .withChatAccount(main.credential)
                 .withCredentialManager(main.credentialManager)
                 .build();
-
-        chat = "alienfromdia";
-        twitchClient.getChat().joinChannel(chat);
-        twitchClient.getChat().sendMessage(chat,"test");
     }
 
     @SubscribeEvent

@@ -1,4 +1,4 @@
-package alien.twitch.integration;
+package me.alien.twitch.integration;
 
 import net.minecraftforge.common.ForgeConfigSpec;
 import org.apache.commons.lang3.tuple.Pair;

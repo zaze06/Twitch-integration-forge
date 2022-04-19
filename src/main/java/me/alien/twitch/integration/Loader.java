@@ -1,4 +1,4 @@
-package alien.twitch.integration;
+package me.alien.twitch.integration;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
