@@ -3,6 +3,7 @@ package me.alien.twitch.integration;
 import me.alien.twitch.integration.commands.Connect;
 import com.github.twitch4j.TwitchClient;
 import com.github.twitch4j.TwitchClientBuilder;
+import me.alien.twitch.integration.commands.Disconnect;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.event.server.ServerStoppingEvent;
@@ -92,6 +93,7 @@ public class Listener {
 
     @SubscribeEvent
     public void registerCommands(RegisterCommandsEvent e){
+        Disconnect.register(e.getDispatcher());
         Connect.register(e.getDispatcher());
     }
 }
