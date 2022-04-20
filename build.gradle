@@ -200,7 +200,7 @@ dependencies {
     library 'org.json:json:20220320'
 
     // mariadb sql library
-    //library 'org.mariadb.jdbc:mariadb-java-client:3.0.4'
+    library 'org.mariadb.jdbc:mariadb-java-client:3.0.4'
 
     //library 'com.github.twitch4j:twitch4j:1.9.0'
 

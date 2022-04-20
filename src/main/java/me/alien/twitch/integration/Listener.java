@@ -34,19 +34,22 @@ public class Listener {
     @SubscribeEvent
     public void onServerStart(ServerStartingEvent e){
         try {
+            int i = 0;
             Class.forName("org.mariadb.jdbc.Driver");
             String connection = "jdbc:mariadb://"+main.mysql.getString("ip")+"/"+main.mysql.getString("database")+"?user="+main.mysql.getString("username")+"&password="+main.mysql.getString("password");
             LOGGER.info(connection);
             //conn = DriverManager.getConnection(connection );
             String con2 = "jdbc:mariadb://"+main.mysql.getString("ip")+"/"+main.mysql.getString("database");
-            main.conn = DriverManager.getConnection(con2, "twitch_bot", "Twitch_bot");
-        } catch (Exception ex) {LOGGER.warn("Cant connect to sql server, defaulting to json backup may be out of date");
+            main.conn = DriverManager.getConnection(connection, "twitch_bot", "Twitch_bot");
+        } catch (Exception ex) {
+            LOGGER.warn("Cant connect to sql server, defaulting to json backup may be out of date");
             try {
                 JSONObject points = new JSONObject(Loader.leadFile(new FileInputStream(System.getProperty("user.dir")+"/data/backup.json")));
                 for(String key : points.keySet()){
                     main.viewerPoints.put(key, points.getInt(key));
                 }
-            } catch (FileNotFoundException e1) {LOGGER.warn("Cant find file "+System.getProperty("user.dir")+"/data/backup.json"+" this file be be created");
+            } catch (FileNotFoundException e1) {
+                LOGGER.warn("Cant find file \""+System.getProperty("user.dir")+"/twitchIntegration/data/backup.json\""+" this file be be created");
                 File file = new File(System.getProperty("user.dir")+"/twitchIntegration/data/backup.json");
                 try {
                     new File(file.getParent()).mkdirs();
