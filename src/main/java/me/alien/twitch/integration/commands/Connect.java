@@ -1,16 +1,19 @@
 package me.alien.twitch.integration.commands;
 
+import com.github.twitch4j.chat.events.channel.ChannelMessageEvent;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.ArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import me.alien.twitch.integration.TwitchListener;
 import net.minecraft.Util;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.MessageArgument;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import org.apache.logging.log4j.core.config.builder.api.ComponentBuilder;
 
@@ -30,10 +33,14 @@ public class Connect {
     private static int execute(CommandContext<CommandSourceStack> command){
         if(command.getSource().getEntity() instanceof Player p){
             try {
-                String user = MessageArgument.getMessage(command, "TwitchUser").getString();
-                twitchClient.getChat().joinChannel(user);
-                chat = user;
-                command.getSource().getEntity().sendMessage(new TextComponent("<a_twitch_bot_> Connected to chat "+chat), Util.NIL_UUID);
+                if(command.getSource().getEntity() instanceof ServerPlayer && chat == null) {
+                    String user = MessageArgument.getMessage(command, "TwitchUser").getString();
+                    twitchClient.getChat().joinChannel(user);
+                    chat = user;
+                    command.getSource().getEntity().sendMessage(new TextComponent("<a_twitch_bot_> Connected to chat " + chat), Util.NIL_UUID);
+                    twitchClient.getChat().sendMessage(chat, "I was summoned hear by " + command.getSource().getEntity().getDisplayName().getString());
+                    twitchClient.getEventManager().onEvent(ChannelMessageEvent.class, TwitchListener::onChatMessage);
+                }
             } catch (CommandSyntaxException e) {
                 throw new RuntimeException(e);
             }
