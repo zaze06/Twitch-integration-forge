@@ -10,6 +10,7 @@ import net.minecraft.network.chat.TextComponent;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.event.server.ServerStoppingEvent;
+import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import org.json.JSONObject;
@@ -35,12 +36,12 @@ public class Listener {
     }
     public static Timer pointAccumulation;
     public static Timer looper;
-    private final boolean[] timersNotFinished = new boolean[12];
-    private final int[] timersDelay = new int[12];
+    public static final boolean[] timersNotFinished = new boolean[12];
+    public static final int[] timersDelay = new int[12];
     public Timer timers;
     public Timer timer;
 
-    @SubscribeEvent
+    @SubscribeEvent(priority = EventPriority.HIGH)
     public void onServerStart(ServerStartingEvent e){
         try {
             int i = 0;
@@ -184,7 +185,7 @@ public class Listener {
         timer.start();
     }
 
-    @SubscribeEvent
+    @SubscribeEvent(priority = EventPriority.HIGH)
     public void onServerStop(ServerStoppingEvent e){
         twitchClient.getChat().sendMessage(chat, "I was instructed to self destruct");
         twitchClient.getChat().disconnect();
