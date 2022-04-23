@@ -7,6 +7,8 @@ import com.github.twitch4j.TwitchClientBuilder;
 import com.github.twitch4j.auth.providers.TwitchIdentityProvider;
 import me.alien.twitch.integration.util.Level;
 import me.alien.twitch.integration.util.Action;
+import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
@@ -47,6 +49,8 @@ public class Main {
     public static boolean disableShit = false;
     public static String channelId = null;
     public static final ArrayList<Action> ActionList = new ArrayList<>();
+    public static final ArrayList<MobEffect> potionEffectTypes = new ArrayList<>();
+
 
     public Main() {
         MinecraftForge.EVENT_BUS.register(new Listener(this));
@@ -62,5 +66,16 @@ public class Main {
                 .withChatAccount(credential)
                 .withCredentialManager(credentialManager)
                 .build();
+
+        potionEffectTypes.add(MobEffects.BLINDNESS);
+        potionEffectTypes.add(MobEffects.POISON);
+        potionEffectTypes.add(MobEffects.BAD_OMEN);
+        potionEffectTypes.add(MobEffects.WITHER);
+        potionEffectTypes.add(MobEffects.MOVEMENT_SLOWDOWN);
+        potionEffectTypes.add(MobEffects.DIG_SLOWDOWN);
+        potionEffectTypes.add(MobEffects.CONFUSION);
+        potionEffectTypes.add(MobEffects.HUNGER);
+        potionEffectTypes.add(MobEffects.HARM);
+        potionEffectTypes.add(MobEffects.WEAKNESS);
     }
 }

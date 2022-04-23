@@ -199,5 +199,6 @@ public class Listener {
         Send.register(e.getDispatcher());
         Points.register(e.getDispatcher());
         Chat.register(e.getDispatcher());
+        GivePoints.register(e.getDispatcher());
     }
 }

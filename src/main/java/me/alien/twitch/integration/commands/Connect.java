@@ -26,10 +26,8 @@ import static me.alien.twitch.integration.Main.*;
 public class Connect {
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher){
         dispatcher.register(Commands.literal("connect").requires((command) -> {
-            return command.hasPermission(1);
-        }).then(Commands.argument("TwitchUser", MessageArgument.message()).executes((command) -> {
-            return execute(command);
-        })));
+            return command.hasPermission(Commands.LEVEL_ALL);
+        }).then(Commands.argument("TwitchUser", MessageArgument.message()).executes((command) -> execute(command))));
     }
 
     private static int execute(CommandContext<CommandSourceStack> command){

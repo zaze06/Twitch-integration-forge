@@ -18,7 +18,7 @@ public class Config {
         clientConfig.save();
     }
 
-    private static class Client {
+    public static class Client {
         public static ForgeConfigSpec.IntValue chargedCreeperOdds;
         public static ForgeConfigSpec.IntValue creeperOdds;
         public static ForgeConfigSpec.IntValue balloonPopOdds;
