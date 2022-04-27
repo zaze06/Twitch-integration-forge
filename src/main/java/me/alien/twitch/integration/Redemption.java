@@ -2,9 +2,15 @@ package me.alien.twitch.integration;
 
 import com.github.twitch4j.pubsub.domain.ChannelPointsUser;
 import com.github.twitch4j.pubsub.events.RewardRedeemedEvent;
+import mekanism.api.Coord4D;
+import mekanism.api.MekanismAPI;
+import mekanism.api.radiation.IRadiationSource;
+import mekanism.common.lib.radiation.RadiationManager;
+import mekanism.common.lib.radiation.RadiationSource;
 import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -12,6 +18,7 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.item.PrimedTnt;
 import net.minecraft.world.entity.monster.*;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.item.context.UseOnContext;
@@ -90,19 +97,31 @@ public class Redemption extends Thread {
                     public void run() {
                         for (ServerPlayer p : ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers()) {
                             BlockPos pos = p.getOnPos();
-                            for (int x = -3; x < 4; x++) {
+                            /*for (int x = -3; x < 4; x++) {
                                 for (int y = -3; y < 4; y++) {
                                     for (int z = -3; z < 4; z++) {
                                         BlockPos blockPos = new BlockPos(pos.getX() + x, pos.getY() + y, pos.getZ() + z);
                                         p.getLevel().setBlock(blockPos, Blocks.AIR.defaultBlockState(), 3);
                                     }
                                 }
+                            }*/
+                            PrimedTnt tnt = new PrimedTnt(EntityType.TNT, p.getLevel());
+                            tnt.setPos(Vec3.atCenterOf(pos));
+                            tnt.setFuse(0);
+                            tnt.setSilent(true);
+                            tnt.setCustomName(new TextComponent(userName));
+
+                            for(int i = 0; i < 2; i++) {
+                                i = (int) (Math.random() * potionEffectTypes.size() + 1);
+                                if (i > potionEffectTypes.size()) {
+                                    MekanismAPI.getRadiationManager().radiate(new Coord4D(p), 4);
+                                } else {
+                                    p.addEffect(new MobEffectInstance(potionEffectTypes.get(i), 40 * 20, 4));
+                                }
                             }
-                            int i = (int) (Math.random() * potionEffectTypes.size());
-                            p.addEffect(new MobEffectInstance(potionEffectTypes.get(i), 40 * 20, 4));
-                            i = (int) (Math.random() * potionEffectTypes.size());
-                            p.addEffect(new MobEffectInstance(potionEffectTypes.get(i), 40 * 20, 4));
+
                             p.sendMessage(new TextComponent(event.getRedemption().getUser().getDisplayName() + " redeemed BalloonPop!"), Util.NIL_UUID);
+
                         }
                     }
                 });
@@ -404,6 +423,8 @@ public class Redemption extends Thread {
                 });
             }
         }
+
+
         if (cost >= 100) {
             ServerLifecycleHooks.getCurrentServer().execute(new Runnable() {
                 @Override

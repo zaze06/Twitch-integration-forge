@@ -16,7 +16,8 @@ plugins {
 apply plugin: 'net.minecraftforge.gradle'
 
 shadowJar {
-    relocate 'org.apache.commons.lang.enum', 'me.alien.twitch.integration.lang'
+    //relocate 'org.apache.commons.lang.enum', 'me.alien.twitch.integration.lang'
+    zip64 true
 }
 
 reobf {
@@ -185,7 +186,9 @@ repositories {
             includeGroup "curse.maven"
         }
     }
+
     mavenCentral()
+
 }
 
 dependencies {
@@ -194,65 +197,29 @@ dependencies {
     // The userdev artifact is a special name and will get all sorts of transformations applied to it.
     minecraft 'net.minecraftforge:forge:1.18.2-40.0.52'
 
-    //library 'com.github.twitch4j:twitch4j:1.9.0'
-
     // org.json json library
-    library 'org.json:json:20220320'
+    implementation 'org.json:json:20220320'
 
     // mariadb sql library
-    library 'org.mariadb.jdbc:mariadb-java-client:3.0.4'
+    implementation 'org.mariadb.jdbc:mariadb-java-client:3.0.4'
 
-    //library 'com.github.twitch4j:twitch4j:1.9.0'
-
-    library(group: 'com.github.twitch4j', name: 'twitch4j', version: '1.9.0') {
+    // twitch4j twitch library
+    implementation(group: 'com.github.twitch4j', name: 'twitch4j', version: '1.9.0') {
         exclude group: "commons-lang"
     }
-    library 'blank:commons-lang-2.6:2.6'
+    implementation 'blank:commons-lang-2.6:2.6'
 
-    // Twitch4J java twitch library
-    /*library 'blank:twitch4j:1.9.0'
-    library 'blank:twitch4j-auth:1.9.0'
-    library 'blank:twitch4j-common:1.9.0'
-    library 'blank:twitch4j-eventsub-common:1.9.0'
-    library 'blank:twitch4j-extensions:1.9.0'
-    library 'blank:twitch4j-helix:1.9.0'
-    library 'blank:twitch4j-kraken:1.9.0'
-    library 'blank:twitch4j-messaginginterface:1.9.0'
-    library 'blank:twitch4j-pubsub:1.9.0'
-    library 'blank:twitch4j-chat:1.9.0'
-    library 'blank:twitch4j-graphql:1.9.0'
 
-    library 'blank:credentialmanager-0.1.2:0.1.2'
-    library 'blank:events4j-v0.2.0:v0.2.0'
-    library 'com.github.philippheuer.events4j:events4j-handler-simple:0.10.0'
-    library 'com.github.vladimir-bukhtoyarov:bucket4j-core:7.4.0'
-    library 'io.github.openfeign:feign-core:11.8'
-    library 'javax.json:javax.json-api:1.1.4'
-    library 'it.unimi.dsi:fastutil:8.5.8'
-    library 'org.jetbrains:annotations:23.0.0'
-    library 'com.github.philippheuer.events4j:events4j-core:0.10.0'
-    library 'io.github.openfeign:feign-slf4j:11.8'
-    library('com.netflix.archaius:archaius-core:0.6.0'){
-        //exclude group: "commons-lang"
-    }*/
-    //library 'org.apache.commons:commons-lang3:3.12.0'
-    //library 'blank:archaius-core-2.0.0-rc.7:2.0.0-rc.7'
-
-    // Support library's for Twitch4J
-    //library 'com.github.oshi:oshi-parent:6.1.6'
-    //library 'org.apache.httpcomponents:httpcore-niossl:4.0-alpha6'
-    //library 'org.slf4j:slf4j-parent:1.7.36'
-    //library 'org.slf4j:slf4j-api:2.0.0-alpha7'
-    //library 'plexus:plexus-utils:1.0.3'
-    //library 'org.apache.commons:commons-configuration2:2.7'*/
-    //library 'com.github.philippheuer.credentialmanager:credentialmanager:0.1.1'
-    //library 'org.jline:jline:3.21.0'
-    //library 'com.squareup.okhttp3:okhttp:5.0.0-alpha.6'
-    //library 'com.fasterxml.jackson.core:jackson-core:2.13.2'
 
     runtimeOnly fg.deobf('curse.maven:configured-457570:3721946')
-    //runtimeOnly fg.deobf('blank:OptiFine_1.18.2_HD_U_H7:H7')
-    //implementation fg.deobf('blank:twitch4jLib-1.0:1.0')
+
+    compileOnly "curse.maven:mekanism-268560:3743835"
+
+    // If you want to test/use Mekanism & its modules during `runClient` invocation, use the following
+    runtimeOnly fg.deobf("curse.maven:mekanism-268560:3743835")// core
+    runtimeOnly fg.deobf("curse.maven:mekanism-345425:3743840")// Mekanism: Additions
+    runtimeOnly fg.deobf("curse.maven:mekanism-268566:3743837")// Mekanism: Generators
+    runtimeOnly fg.deobf("curse.maven:mekanism-268567:3743838")// Mekanism: Tools
 
     // Real mod deobf dependency examples - these get remapped to your current mappings
     // compileOnly fg.deobf("mezz.jei:jei-${mc_version}:${jei_version}:api") // Adds JEI API as a compile dependency

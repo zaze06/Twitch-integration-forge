@@ -187,9 +187,11 @@ public class Listener {
 
     @SubscribeEvent(priority = EventPriority.HIGH)
     public void onServerStop(ServerStoppingEvent e){
-        twitchClient.getChat().sendMessage(chat, "I was instructed to self destruct");
-        twitchClient.getChat().disconnect();
-        chat = null;
+        if(chat != null) {
+            twitchClient.getChat().sendMessage(chat, "I was instructed to self destruct");
+            twitchClient.getChat().disconnect();
+            chat = null;
+        }
     }
 
     @SubscribeEvent
@@ -200,5 +202,6 @@ public class Listener {
         Points.register(e.getDispatcher());
         Chat.register(e.getDispatcher());
         GivePoints.register(e.getDispatcher());
+        test.register(e.getDispatcher());
     }
 }

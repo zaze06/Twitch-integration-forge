@@ -2,6 +2,7 @@ package me.alien.twitch.integration.commands;
 
 import com.github.twitch4j.chat.events.channel.ChannelMessageEvent;
 import com.github.twitch4j.helix.domain.User;
+import com.github.twitch4j.pubsub.events.RewardRedeemedEvent;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.ArgumentType;
@@ -35,13 +36,15 @@ public class Connect {
             try {
                 if(command.getSource().getEntity() instanceof ServerPlayer && chat == null) {
                     String user = MessageArgument.getMessage(command, "TwitchUser").getString();
-                    User twitchUser = twitchClient.getHelix().getUsers(credential.getAccessToken(), null, Arrays.asList(chat)).execute().getUsers().get(0);
+                    User twitchUser = twitchClient.getHelix().getUsers(credential.getAccessToken(), null, Arrays.asList(user)).execute().getUsers().get(0);
                     twitchClient.getChat().joinChannel(user);
                     chat = user;
                     channelId = twitchUser.getId();
                     command.getSource().getEntity().sendMessage(new TextComponent("<a_twitch_bot_> Connected to chat " + chat), Util.NIL_UUID);
                     twitchClient.getChat().sendMessage(chat, "I was summoned hear by " + command.getSource().getEntity().getDisplayName().getString());
+                    twitchClient.getPubSub().listenForChannelPointsRedemptionEvents(credential, channelId);
                     twitchClient.getEventManager().onEvent(ChannelMessageEvent.class, TwitchListener::onChatMessage);
+                    twitchClient.getEventManager().onEvent(RewardRedeemedEvent.class, TwitchListener::onRedeemed);
                 }
             } catch (CommandSyntaxException e) {
                 throw new RuntimeException(e);

@@ -278,4 +278,9 @@ public class TwitchListener {
             }
         }
     }
+
+    public static void onRedeemed(RewardRedeemedEvent e){
+        Redemption r = new Redemption(e, null);
+        r.start();
+    }
 }
